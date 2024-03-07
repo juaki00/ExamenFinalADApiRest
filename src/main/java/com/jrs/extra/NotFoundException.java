@@ -1,7 +1,7 @@
 package com.jrs.extra;
 
-public class AutenticacionException extends RuntimeException{
-    public AutenticacionException(String mensaje){
+public class NotFoundException extends RuntimeException{
+    public NotFoundException( String mensaje){
         super(mensaje);
     }
 }

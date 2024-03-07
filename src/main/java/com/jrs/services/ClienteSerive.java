@@ -1,16 +1,20 @@
 package com.jrs.services;
 
 import com.jrs.extra.AutenticacionException;
+import com.jrs.extra.NotFoundException;
 import com.jrs.models.Cliente;
+import com.jrs.models.EstadisticasResponse;
 import com.jrs.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
-public class InformacionClienteSerive {
+public class ClienteSerive {
 
     @Autowired
     ClienteRepository clienteRepository;
@@ -27,153 +31,82 @@ public class InformacionClienteSerive {
         }
     }
 
+    public void insertOcupacion( String nombre , Double total , String estado , String token ) {
+        if(securityService.validateToken( token )){
+            Cliente cliente = new Cliente();
+            cliente.setNombre( nombre );
+            cliente.setTotal( total );
+            cliente.setEstado( estado );
+            clienteRepository.save( cliente );
+        }
+        else{
+            throw new AutenticacionException( "Token incorrecto" );
+        }
+    }
 
-//    @Autowired
-//    private OcupacionRepository ocupacionRepository;
-//    @Autowired
-//    private OcupacionRepositoryCompleto ocupacionRepositoryCompleto;
-//    private final static Logger LOGGER = LoggerFactory.getLogger( OcupacionSerive.class );
-//
-//
-//    /**
-//     * The getAll function returns a list of all the OcupacionResponse objects in the database.
-//     *
-//     * @return A list of ocupaciondto
-//     */
-//    public List<OcupacionResponse> getAll( ) {
-//        LOGGER.info( "Entra getAll" );
-//        List<OcupacionCompletoDTO> lista = ocupacionRepositoryCompleto.findAll( );
-//
-//        List<OcupacionResponse> listaResult = new ArrayList<>(  );
-//        listaResult = lista.stream( ).map( ocupacionCompletoDTO -> {
-//            OcupacionResponse ocupacionResponse= new OcupacionResponse();
-//            ocupacionResponse.setData( ocupacionCompletoDTO.getData().getFirst().getValor() );
-//            ocupacionResponse.setId( ocupacionCompletoDTO.getId( ) );
-//            ocupacionResponse.setNombre( ocupacionCompletoDTO.getNombre( ) );
-//            return ocupacionResponse;
-//        } ).collect( Collectors.toList() );
-//        return listaResult;
-//    }
-//
-//
-//    /**
-//     * The getOcupacionPorTipo function is used to get a list of occupations from the database that match the given type.
-//     *
-//     * @param tipo Filter the list of ocupacioncompletodto objects
-//     * @return A list of ocupacioncompletodto objects
-//     */
-//    public List<OcupacionCompletoDTO> getOcupacionPorTipo( String tipo ) {
-//
-//        LOGGER.info( "Empieza getOcupacionPorTipo - tipo: " + tipo );
-//        List<OcupacionCompletoDTO> resultado = new ArrayList<>( );
-//        List<OcupacionCompletoDTO> todos = this.ocupacionRepositoryCompleto.findAll( );
-//        resultado = todos.stream( ).filter( objeto -> objeto.getMetaData( ).get( 1 ).getNombre( )
-//                        .equals( FormatearCodigoOcupacion.formatearCodigoTipo( tipo ) ) )
-//                .collect( Collectors.toList( ) );
-//        LOGGER.info( "Termina getOcupacionPorTipo - resultado: " + resultado );
-//        return resultado;
-//    }
-//
-//    /**
-//     * The getOcupacionPorMes function is used to get the occupation by month.
-//     *
-//     * @param mes Filter the data in the repository
-//     * @return A list of ocupacioncompletodto objects
-//     */
-//    public List<OcupacionCompletoDTO> getOcupacionPorMes( String mes ) {
-//        LOGGER.info( "Empieza getOcupacionPorMes - mes: " + mes );
-//        List<OcupacionCompletoDTO> resultado = new ArrayList<>( );
-//        List<OcupacionCompletoDTO> todos = this.ocupacionRepositoryCompleto.findAll( );
-//        resultado = todos.stream( ).filter( objeto -> objeto.getMetaData( ).get( 0 ).getCodigo( )
-//                        .equals( mes ) )
-//                .collect( Collectors.toList( ) );
-//        LOGGER.info( "Termina getOcupacionPorMes - resultado: " + resultado );
-//        return resultado;
-//    }
-//
-//    /**
-//     * The getOcupacionPorTipoYMes function takes in a String tipo and a String mes,
-//     * then returns an OcupacionCompletoDTO object.
-//     *
-//     * @param tipo Filter the results by type of occupation
-//     * @param mes Filter the data by month
-//     * @return An ocupacioncompletodto object
-//     */
-//    public OcupacionCompletoDTO getOcupacionPorTipoYMes( String tipo , String mes ) {
-//        LOGGER.info( "Empieza getOcupacionPorMes - mes: " + mes );
-//        List<OcupacionCompletoDTO> resultado = new ArrayList<>( );
-//        List<OcupacionCompletoDTO> todos = this.ocupacionRepositoryCompleto.findAll( );
-//        resultado = todos.stream( ).filter( objeto -> objeto.getMetaData( ).get( 0 ).getCodigo( )
-//                        .equals( mes ) )
-//                .collect( Collectors.toList( ) );
-//        resultado = resultado.stream( ).filter( objeto -> objeto.getMetaData( ).get( 1 ).getNombre( )
-//                        .equals( FormatearCodigoOcupacion.formatearCodigoTipo( tipo ) ) )
-//                .collect( Collectors.toList( ) );
-//        LOGGER.info( "Termina getOcupacionPorMes - resultado: " + resultado );
-//        return resultado.getFirst( );
-//    }
-//
-//
-//    /**
-//     * The insertOcupacion function inserts a new document into the ocupacion collection.
-//     *
-//     * @param mes Set the month of the occupation
-//     * @param tipo Format the metadata codigo and nombre
-//     * @param valor Set the value of the data attribute in ocupacioncompletodto
-//     * @return The following:
-//     */
-//    public void insertOcupacion( String mes , String tipo , String valor ) {
-//        LOGGER.info( "Comienza insertOcupacion" );
-//        String tipoFormateado = FormatearCodigoOcupacion.formatearCodigoTipo( tipo );
-//        String mesTitleCase = mes.substring( 0 , 1 ).toUpperCase( ) + mes.substring( 1 );
-//        //crear modelo
-//        OcupacionCompletoDTO insertOcupacionResponse = new OcupacionCompletoDTO( );
-//        //crear data
-//        DataOcupacion data = new DataOcupacion( );
-//        List<DataOcupacion> listData = new ArrayList<>( );
-//        data.setValor( Integer.parseInt( valor ) );
-//        listData.add( data );
-//        //crear metadata
-//        MetaDataOcupacion metaDataMes = new MetaDataOcupacion( );
-//        MetaDataOcupacion metaDataTipo = new MetaDataOcupacion( );
-//        List<MetaDataOcupacion> listMetaData = new ArrayList<>( );
-//        metaDataMes.setCodigo( mes );
-//        metaDataMes.setNombre( mesTitleCase );
-//        metaDataTipo.setCodigo( FormatearCodigoOcupacion.formatearCodigoMetadata( tipoFormateado ) );
-//        metaDataTipo.setNombre( tipoFormateado );
-//        listMetaData.add( metaDataMes );
-//        listMetaData.add( metaDataTipo );
-//        //setear atributos
-//        insertOcupacionResponse.setData( listData );
-//        insertOcupacionResponse.setMetaData( listMetaData );
-//        insertOcupacionResponse.setNombre( mesTitleCase + ", " + tipoFormateado );
-//        this.ocupacionRepositoryCompleto.save( insertOcupacionResponse );
-//        LOGGER.info( "Fin insertOcupacion" );
-//    }
-//
-//    /**
-//     * The updateOcupacion function updates the value of a given ocupacion.
-//     *
-//     * @param mes Get the first letter of the month and capitalize it
-//     * @param tipo Create a new dataocupacion object and set the value of its valor attribute
-//     * @param valor Set the value of the dataocupacion object
-//     * @return An object of type ocupacioncompletodto
-//     */
-//    public void updateOcupacion( String mes , String tipo , String valor ) {
-//        LOGGER.info( "Comienza updateOcupacion" );
-//        String tipoFormateado = FormatearCodigoOcupacion.formatearCodigoTipo( tipo );
-//        String mesTitleCase = mes.substring( 0 , 1 ).toUpperCase( ) + mes.substring( 1 );
-//        //crear modelo
-//        OcupacionCompletoDTO ocupacionCompletoDTO = this.getOcupacionPorTipoYMes( tipo , mes );
-//        //crear data
-//        DataOcupacion data = new DataOcupacion( );
-//        List<DataOcupacion> listData = new ArrayList<>( );
-//        data.setValor( Integer.parseInt( valor ) );
-//        listData.add( data );
-//        //crear metadata
-//        //setear atributos
-//        ocupacionCompletoDTO.setData( listData );
-//        this.ocupacionRepositoryCompleto.save( ocupacionCompletoDTO );
-//        LOGGER.info( "Fin updateOcupacion" );
-//    }
+    public Cliente getClienteById( Integer id , String token ) {
+        Cliente cliente;
+        if(securityService.validateToken( token )){
+            if( clienteRepository.findById( id ).isPresent()){
+                return clienteRepository.findById( id ).get();
+            }
+            else{
+                throw new NotFoundException( "No existe ningun cliente con id "+id );
+            }
+        }
+        else{
+            throw new AutenticacionException( "Token incorrecto" );
+        }
+    }
+
+    public List<Cliente> getMejores( Integer cantidad , String token ) {
+        if(securityService.validateToken( token )){
+            List<Cliente> clientes = clienteRepository.findAll( );
+            if( clientes.size()==0){
+                throw new NotFoundException( "No existe ningun cliente activo con cantidad mayor a " + cantidad );
+
+            }
+            else{
+                List<Cliente> clientesMejores = new ArrayList<>(  );
+                for(Cliente c: clientes){
+                    if(c.getTotal()>cantidad && c.getEstado().equals( "activo" )){
+                        clientesMejores.add( c );
+                    }
+                }
+                return clientesMejores;
+            }
+        }
+        else{
+            throw new AutenticacionException( "Token incorrecto" );
+        }
+    }
+
+    public EstadisticasResponse getEstadidsticas( String token ) {
+        EstadisticasResponse response = new EstadisticasResponse();
+        List<Cliente> clientes = clienteRepository.findAll();
+        Integer inactivos = 0;
+        Double total = 0.0;
+        Double promedio = 0.0;
+        Integer activos = 0;
+
+        for(Cliente c: clientes){
+            total += c.getTotal();
+            if(c.getEstado().equals( "activo" )){
+                activos++;
+                promedio = promedio + c.getTotal();
+            }
+            else{
+                if(c.getTotal()>0){
+                    inactivos++;
+                }
+            }
+            promedio = promedio / activos;
+        }
+        response.setInactivos( inactivos );
+        response.setPromedio( promedio );
+        response.setTotal( total );
+        return response;
+    }
+
+
 }

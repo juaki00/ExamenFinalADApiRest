@@ -1,4 +1,4 @@
-package com.example.springbootapidemo;
+package com.jrs.services;
 
 import org.springframework.stereotype.Service;
 
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 public class SecurityService {
 
     public Boolean validateToken(String token){
-        return (token.equals("t0k3n"));
+        return (token.equals("1234"));
     }
 
 }

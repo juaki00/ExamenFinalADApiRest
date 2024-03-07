@@ -9,7 +9,7 @@ public class ApplicationStarter {
      * The main function of the application.
      *
      *
-     * @param String[] args Pass arguments to the main function
+     * @param args Pass arguments to the main function
      *
      * @return Void
      *
